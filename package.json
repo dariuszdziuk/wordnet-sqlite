@@ -1,0 +1,15 @@
+{
+  "name": "wordnet-sqlite",
+  "version": "0.0.1",
+  "description": "WordNet SQLite DB exporter",
+  "main": "index.js",
+  "dependencies": {
+    "wordnet": "~0.1.2",
+    "sqlite3": "~2.1.19",
+    "async": "~0.2.9",
+    "winston": "~0.7.2"
+  },
+  "devDependencies": {},
+  "author": "Dariusz Dziuk <dariusz.dziuk@gmail.com> (http://www.dariuszdziuk.com/)",
+  "license": "MIT"
+}
