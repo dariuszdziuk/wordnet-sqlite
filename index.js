@@ -85,6 +85,7 @@ function createDatabase(words, callback) {
 
         /* Handle error */
         if (err) {
+          logger.error('error creating database', err);
           callback(err);
           return;
         }
@@ -118,11 +119,22 @@ var _insertWordSQL = fs.readFileSync('sql/insert.sql', 'utf-8');
 function insertWord(db, word, callback) {
 
   db.run(_insertWordSQL, {
-    word: word.word,
-    pos: word.pos,
-    words: word.alternatives,
-    glossary: word.glossary
-  }, callback);
+    $word: word.word,
+    $pos: word.pos,
+    $words: word.alternatives,
+    $glossary: word.glossary
+  }, function(err) {
+
+    /* Handle error */
+    if (err) {
+      console.err('error adding word %s', word, err);
+      callback(err);
+      return;
+    }
+
+    callback();
+
+  });
 
 };
 
