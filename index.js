@@ -132,6 +132,8 @@ function insertWord(db, word, callback) {
       return;
     }
 
+    logger.info('word added: %s (%s)', word.word, word.alternatives);
+
     callback();
 
   });
@@ -147,7 +149,10 @@ function insertWord(db, word, callback) {
 
 function insertWords(words, db, callback) {
 
-  async.each(words, function(word, callback) {
+  var concurrency = 1;
+
+  /* Workers queue */
+  var queue = async.queue(function(word, callback) {
 
     /* Look up the word */
     wordnet.lookup(word, function(err, definitions) {
@@ -172,8 +177,6 @@ function insertWords(words, db, callback) {
         var glossary = definition.glossary;
         var pos = definition.meta.synsetType;
 
-        logger.info('adding word: %s (%s)', word, alternatives);
-
         insertWord(db, {
           word: word,
           pos: pos,
@@ -185,16 +188,19 @@ function insertWords(words, db, callback) {
 
     }); // wordnet.lookUp
 
-  }, function(err) {
+  }, concurrency);
 
-    /* Handle error */
-    if (err) {
-      callback(err);
-      return;
-    }
+  /* On queue finish */
+  queue.drain = function() {
 
     winston.info('import complete');
+    callback();
 
+  };
+
+  /* Enqueue words */
+  words.forEach(function(word) {
+    queue.push(word);
   });
 
 };
