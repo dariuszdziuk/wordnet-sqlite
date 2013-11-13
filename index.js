@@ -174,7 +174,12 @@ function insertWords(words, db, callback) {
 
         logger.info('adding word: %s (%s)', word, alternatives);
 
-        insertWord(db, word, callback);
+        insertWord(db, {
+          word: word,
+          pos: pos,
+          alternatives: alternatives,
+          glossary: glossary
+        }, callback);
 
       }, callback); // defintions.forEach
 
